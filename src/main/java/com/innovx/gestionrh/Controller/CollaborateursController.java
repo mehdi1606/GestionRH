@@ -3,12 +3,14 @@ package com.innovx.gestionrh.Controller;
 import com.innovx.gestionrh.Entity.Collaborateurs;
 import com.innovx.gestionrh.Repository.CollaborateursRepository;
 import com.innovx.gestionrh.Service.CollaborateursService;
+import com.innovx.gestionrh.Service.ExcelService;
 import com.innovx.gestionrh.Service.StagiareService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
@@ -21,6 +23,9 @@ import java.util.Optional;
 public class CollaborateursController {
     @Autowired
     private CollaborateursService collaborateurservice;
+    @Autowired
+    private  ExcelService excelService;
+
 
 
     @Autowired
@@ -60,4 +65,19 @@ public class CollaborateursController {
         return ResponseEntity.ok().build();
     }
 
+
+    @GetMapping("Collaborateurs/all-birthdays")
+    public List<String> getAllCollaborateursDateNaissance() {
+        return collaborateurservice.getAllCollaborateursDateNaissance();
+    }
+    @PostMapping("/Collaborateurs/import")
+    public ResponseEntity<String> importExcel(@RequestParam("file") MultipartFile file) {
+        try {
+            excelService.importDataFromExcel(file.getInputStream());
+            return ResponseEntity.status(HttpStatus.OK).body("Data imported successfully.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to import data.");
+        }
+    }
 }

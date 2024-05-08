@@ -1,56 +1,34 @@
 package com.innovx.gestionrh.Service;
-
-import org.springframework.beans.factory.annotation.Value;
+import jakarta.mail.internet.MimeMessage;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
 
 @Service
 public class EmailServiceImpl implements EmailService {
 
-    // Injecting values from properties file or configuration
-    @Value("houarimehdi7@gmail.com")
-    private String userName;
-
-    @Value("EE59B07197F2B01E1C201044C6BB489BA273")
-    private String apiKey;
+    @Autowired
+    private JavaMailSender mailSender;
 
     @Override
-    public void sendSimpleMessage(String to, String subject, String text) {
+    public void sendEmail(String to, String subject, String message) {
         try {
-            String from = "houarimehdi7@gmail.com"; // Change this to your email address
-            String fromName = "innovx"; // Change this to your name
-            String body = text;
-            String isTransactional = "false"; // Assuming this is not a transactional email
+            SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+            
+            simpleMailMessage.setFrom("houarimehdi7@gmail.com"); // Set the sender email address
+            simpleMailMessage.setTo(to);
+            simpleMailMessage.setSubject(subject);
+            simpleMailMessage.setText(message);
 
-            String encoding = "UTF-8";
 
-            String data = "apikey=" + URLEncoder.encode("EE59B07197F2B01E1C201044C6BB489BA273", encoding);
-            data += "&from=" + URLEncoder.encode(from, encoding);
-            data += "&fromName=" + URLEncoder.encode(fromName, encoding);
-            data += "&subject=" + URLEncoder.encode(subject, encoding);
-            data += "&bodyHtml=" + URLEncoder.encode(body, encoding);
-            data += "&to=" + URLEncoder.encode(to, encoding);
-            data += "&isTransactional=" + URLEncoder.encode(isTransactional, encoding);
-
-            URL url = new URL("https://api.elasticemail.com/v2/email/send");
-            URLConnection conn = url.openConnection();
-            conn.setDoOutput(true);
-            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-            wr.write(data);
-            wr.flush();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String result = rd.readLine();
-            wr.close();
-            rd.close();
-
-            System.out.println(result); // Assuming you want to print the result
-        } catch (Exception e) {
-            e.printStackTrace();
+            mailSender.send(simpleMailMessage);
+            System.out.println("Email sent successfully to: " + to);
+        } catch (MailException e) {
+            System.out.println("Failed to send email to: " + to);
+            e.printStackTrace(); // Log the exception
+            throw e; // Rethrow the exception to be handled by the caller
         }
     }
 }

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Calendar;
 import java.util.Date;
 
 @Entity
@@ -56,7 +57,26 @@ public class Stagiaires {
     @Column(name = "durée")
     private int durée;
     @OneToOne(mappedBy = "matriculestagiaire")
+    private Collaborateurs collaborateurs;
+    @OneToOne(mappedBy = "matriculestagiaire")
     private Document document;
     @Builder.Default
     private boolean isDeleted = false;
+    @PrePersist
+    @PreUpdate
+    private void calculateDuration() {
+        if (dateDébutStage != null && dateFinStage != null) {
+            Calendar startCalendar = Calendar.getInstance();
+            startCalendar.setTime(dateDébutStage);
+            Calendar endCalendar = Calendar.getInstance();
+            endCalendar.setTime(dateFinStage);
+
+            int diffYears = endCalendar.get(Calendar.YEAR) - startCalendar.get(Calendar.YEAR);
+            int diffMonths = diffYears * 12 + endCalendar.get(Calendar.MONTH) - startCalendar.get(Calendar.MONTH);
+
+            durée = diffMonths;
+        } else {
+            durée = 0;
+        }
+    }
 }

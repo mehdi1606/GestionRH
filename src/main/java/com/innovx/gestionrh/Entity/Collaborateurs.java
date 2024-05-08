@@ -42,7 +42,7 @@ public class Collaborateurs {
     private int age;
 
     @Column(name = "date de naissance")
-    private Date date_naissance;
+    private String date_naissance;
 
     @Column(name = "FILIALE")
     private String FILIALE;
@@ -57,13 +57,15 @@ public class Collaborateurs {
     private String Fonction;
 
     @Column(name = "date d'entree")
-    private Date date_entree;
+    private String date_entree;
 
     @Column(name = "Ancienneté")
     private double Ancienneté;
 
     @Builder.Default
     private boolean isDeleted= false;
-
+    @OneToOne
+    @JoinColumn(name = "matricule", referencedColumnName = "Matricule")
+    private Stagiaires matriculestagiaire;
 
 }

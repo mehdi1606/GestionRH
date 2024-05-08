@@ -1,38 +1,33 @@
     package com.innovx.gestionrh.Config;
 
-    import com.google.api.client.util.Value;
+    import java.util.Objects;
+    import java.util.Properties;
+
+    import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.context.annotation.Bean;
     import org.springframework.context.annotation.Configuration;
+    import org.springframework.core.env.Environment;
     import org.springframework.mail.javamail.JavaMailSender;
     import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-    import java.util.Properties;
-
-
     @Configuration
-
     public class MailConfig {
 
-        @Value("${spring.mail.host}")
-        private String host;
-
-        @Value("${spring.mail.port}")
-        private int port;
-
-        @Value("${spring.mail.username}")
-        private String username;
-
-        @Value("${spring.mail.password}")
-        private String password;
+        @Autowired
+        private Environment environment;
 
         @Bean
         public JavaMailSender javaMailSender() {
             JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-            mailSender.setHost(host);
-            mailSender.setPort(port);
-            mailSender.setUsername(username);
-            mailSender.setPassword(password);
+            mailSender.setHost("smtp.elasticemail.com");
+            mailSender.setPort(2525);
+            mailSender.setUsername("houarimehdi7@gmail.com");
+            mailSender.setPassword("4008104EFA95AD9ADCD148A3A9CDE1C8658C"); // Use an environment variable or secure storage for the password
 
+            Properties props = mailSender.getJavaMailProperties();
+            props.put("mail.transport.protocol", "smtp");
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.smtp.starttls.enable", "true");
 
             return mailSender;
         }

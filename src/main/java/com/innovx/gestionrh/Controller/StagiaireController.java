@@ -59,4 +59,5 @@ public class StagiaireController {
         return ResponseEntity.ok().build();
     }
 
+
 }
