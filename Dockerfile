@@ -1,15 +1,25 @@
-#
-# Build stage
-#
-FROM maven:3.8.2-jdk-11 AS build
-COPY . .
-RUN mvn clean package -Pprod -DskipTests
+# syntax=docker/dockerfile:experimental
+FROM eclipse-temurin:17-jdk-alpine as build
+WORKDIR /workspace/app
 
-#
-# Package stage
-#
-FROM openjdk:11-jdk-slim
-COPY --from=build /target/demo-0.0.1-SNAPSHOT.jar demo.jar
-# ENV PORT=8080
-EXPOSE 8080
-ENTRYPOINT ["java","-jar","demo.jar"]
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
+COPY src src
+RUN --mount=type=cache,target=/root/.m2 ./mvnw install -DskipTests
+
+ARG JAR_FILE=target/*.jar
+COPY ${JAR_FILE} target/application.jar
+RUN java -Djarmode=layertools -jar target/application.jar extract --destination target/extracted
+
+FROM eclipse-temurin:17-jdk-alpine
+RUN addgroup -S demo && adduser -S demo -G demo
+VOLUME /tmp
+USER demo
+ARG EXTRACTED=/workspace/app/target/extracted
+WORKDIR application
+COPY --from=build ${EXTRACTED}/dependencies/ ./
+COPY --from=build ${EXTRACTED}/spring-boot-loader/ ./
+COPY --from=build ${EXTRACTED}/snapshot-dependencies/ ./
+COPY --from=build ${EXTRACTED}/application/ ./
+ENTRYPOINT ["java","-noverify","-XX:TieredStopAtLevel=1","-Dspring.main.lazy-initialization=true","org.springframework.boot.loader.JarLauncher"]
