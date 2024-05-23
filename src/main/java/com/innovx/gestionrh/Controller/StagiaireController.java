@@ -36,8 +36,8 @@ public class StagiaireController {
     }
 
     @PostMapping("/stagiares")
-    public Stagiaires createStagiaire(@RequestBody Stagiaires stagiaire,@RequestBody Document document) {
-        return stagiaireService.createStagiaires(stagiaire,document);
+    public Stagiaires createStagiaire(@RequestBody Stagiaires stagiaire) {
+        return stagiaireService.createStagiaires(stagiaire);
     }
 
     @PutMapping("/stagiares/{id}")

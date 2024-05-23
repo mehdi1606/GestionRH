@@ -17,47 +17,35 @@ public class Document {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @OneToOne
-    @JoinColumn(name = "matricule", referencedColumnName = "Matricule")
-    private Stagiaires matriculestagiaire;
 
-    @Lob
+
     @Column(name = "attestation_assurance")
-    private byte[] attestationAssurance;
+    private boolean attestationAssurance;
 
-    @Lob
     @Column(name = "carte_nationale")
-    private byte[] carteNationale;
+    private boolean carteNationale;
 
-    @Lob
     @Column(name = "fiche_anthropométrique")
-    private byte[] ficheAnthropométrique;
+    private boolean ficheAnthropométrique;
 
-    @Lob
     @Column(name = "copie_certifiée_diplômes")
-    private byte[] copieCertifiéeDiplômes;
+    private boolean copieCertifiéeDiplômes;
 
-    @Lob
     @Column(name = "relevé_identité_bancaire")
-    private byte[] relevéIdentitéBancaire;
+    private boolean relevéIdentitéBancaire;
 
-    @Lob
     @Column(name = "CV")
-    private byte[] cv;
+    private boolean cv;
 
-    @Lob
     @Column(name = "convention_stage")
-    private byte[] conventionStage;
+    private boolean conventionStage;
 
-    @Lob
     @Column(name = "fiche_évaluation")
-    private byte[] ficheÉvaluation;
+    private boolean ficheÉvaluation;
 
-    @Lob
     @Column(name = "charte_engagement")
-    private byte[] charteEngagement;
+    private boolean charteEngagement;
 
-    @Lob
     @Column(name = "attestation_stage")
-    private byte[] attestationStage;
+    private boolean attestationStage;
 }

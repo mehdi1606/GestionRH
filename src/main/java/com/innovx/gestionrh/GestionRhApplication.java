@@ -9,5 +9,7 @@ public class GestionRhApplication {
     public static void main(String[] args) {
         SpringApplication.run(GestionRhApplication.class, args);
     }
+    // Set the Google Cloud credentials environment variable
+
 
 }

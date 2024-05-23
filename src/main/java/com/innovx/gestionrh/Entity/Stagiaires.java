@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -56,12 +57,54 @@ public class Stagiaires {
 
     @Column(name = "durée")
     private int durée;
-    @OneToOne(mappedBy = "matriculestagiaire")
-    private Collaborateurs collaborateurs;
-    @OneToOne(mappedBy = "matriculestagiaire")
-    private Document document;
+
+    @Column(name = "status")
+    private String status;
     @Builder.Default
     private boolean isDeleted = false;
+    @Column(name = "accueil_rh_date")
+    private LocalDate accueilRhDate;
+
+    @Column(name = "point_stagiaires_7_days_date")
+    private LocalDate pointStagiaires7DaysDate;
+
+    @Column(name = "point_stagiaires_1_month_date")
+    private LocalDate pointStagiaires1MonthDate;
+
+    @Column(name = "point_stagiaires_3_months_date")
+    private LocalDate pointStagiaires3MonthsDate;
+    @Lob
+    @Column(name = "photo")
+    private String photo; // Field to store the image
+
+    @Column(name = "attestation_assurance")
+    private boolean attestationAssurance;
+
+    @Column(name = "carte_nationale")
+    private boolean carteNationale;
+
+    @Column(name = "fiche_anthropométrique")
+    private boolean ficheAnthropométrique;
+
+    @Column(name = "copie_certifiée_diplômes")
+    private boolean copieCertifiéeDiplômes;
+
+    @Column(name = "relevé_identité_bancaire")
+    private boolean relevéIdentitéBancaire;
+
+    @Column(name = "CV")
+    private boolean cv;
+
+    @Column(name = "convention_stage")
+    private boolean conventionStage;
+
+    @Column(name = "fiche_évaluation")
+    private boolean ficheÉvaluation;
+
+    @Column(name = "charte_engagement")
+    private boolean charteEngagement;
+    @Column(name = "attestation_stage")
+    private boolean attestationStage;
     @PrePersist
     @PreUpdate
     private void calculateDuration() {
@@ -78,5 +121,28 @@ public class Stagiaires {
         } else {
             durée = 0;
         }
+    }
+    public int getTotalValidDocuments() {
+        return (attestationAssurance ? 1 : 0) +
+                (carteNationale ? 1 : 0) +
+                (ficheAnthropométrique ? 1 : 0) +
+                (copieCertifiéeDiplômes ? 1 : 0) +
+                (relevéIdentitéBancaire ? 1 : 0) +
+                (cv ? 1 : 0) +
+                (conventionStage ? 1 : 0) +
+                (ficheÉvaluation ? 1 : 0) +
+                (charteEngagement ? 1 : 0) +
+                (attestationStage ? 1 : 0);
+    }
+
+    public int getTotalNotValidDocuments() {
+        return 10 - getTotalValidDocuments(); // Assuming 10 as the total number of documents
+    }
+    public void createMeetings() {
+        LocalDate now = LocalDate.now();
+        this.accueilRhDate = now.plusDays(3);
+        this.pointStagiaires7DaysDate = now.plusDays(10);
+        this.pointStagiaires1MonthDate = now.plusMonths(1);
+        this.pointStagiaires3MonthsDate = now.plusMonths(3);
     }
 }

@@ -64,8 +64,5 @@ public class Collaborateurs {
 
     @Builder.Default
     private boolean isDeleted= false;
-    @OneToOne
-    @JoinColumn(name = "matricule", referencedColumnName = "Matricule")
-    private Stagiaires matriculestagiaire;
 
 }

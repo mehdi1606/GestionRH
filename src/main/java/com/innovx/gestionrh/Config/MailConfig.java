@@ -19,10 +19,10 @@
         @Bean
         public JavaMailSender javaMailSender() {
             JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-            mailSender.setHost("smtp.elasticemail.com");
-            mailSender.setPort(2525);
+            mailSender.setHost("smtp.gmail.com");
+            mailSender.setPort(587);
             mailSender.setUsername("houarimehdi7@gmail.com");
-            mailSender.setPassword("4008104EFA95AD9ADCD148A3A9CDE1C8658C"); // Use an environment variable or secure storage for the password
+            mailSender.setPassword("ehzw iypu hujm yqzm"); // Use an environment variable or secure storage for the password
 
             Properties props = mailSender.getJavaMailProperties();
             props.put("mail.transport.protocol", "smtp");
