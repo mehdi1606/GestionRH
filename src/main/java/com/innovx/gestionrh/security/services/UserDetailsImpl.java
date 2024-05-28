@@ -5,29 +5,35 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.innovx.gestionrh.Entity.User;
-
+@Getter
 public class UserDetailsImpl implements UserDetails {
   private static final long serialVersionUID = 1L;
   private Long id;
+
   private String lastname;
+
   private String firstname;// This could be the nickname or any non-email identifier.
   private String email;
+
+  private String title;
   private String username;
   @JsonIgnore
   private String password;
   private Collection<? extends GrantedAuthority> authorities;
 
-  public UserDetailsImpl(Long id, String lastname, String firstname,String email, String password,
-                         Collection<? extends GrantedAuthority> authorities) {
+  public UserDetailsImpl(Long id, String lastname, String firstname, String email, String password,
+                         String title, Collection<? extends GrantedAuthority> authorities) {
     this.id = id;
     this.firstname = firstname;
     this.lastname = lastname;  // username is now the nickname or first name
     this.email = email;
+    this.title= title;
     this.password = password;
     this.authorities = authorities;
   }
@@ -40,6 +46,7 @@ public class UserDetailsImpl implements UserDetails {
             user.getFirstName() ,
             user.getEmail(),
             user.getPassword(),
+            user.getTitle(),
             Collections.singletonList(authority));
   }
 
@@ -48,32 +55,9 @@ public class UserDetailsImpl implements UserDetails {
     return authorities;
   }
 
-  public Long getId() {
-    return id;
-  }
 
 
-  public String getEmail() {
-    return email.trim();  // Ensure email has no extra spaces
-  }
-  @Override
-  public String getUsername() {
-    return getEmail(); // Return the email as the username
-  }
-
-  @Override
-  public String getPassword() {
-    return password;
-  }
-
-  public String getFirstname() {
-    return firstname;
-  }
-
-  public String getLastname() {
-    return lastname;
-  }
-  public String getUserRole() {
+    public String getUserRole() {
     return authorities.stream()
             .map(GrantedAuthority::getAuthority)
             .collect(Collectors.joining(","));

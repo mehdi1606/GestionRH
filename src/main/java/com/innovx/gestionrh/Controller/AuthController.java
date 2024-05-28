@@ -27,6 +27,7 @@
     import java.time.LocalDateTime;
     import java.util.Collections;
     import java.util.List;
+    import java.util.Optional;
     import java.util.stream.Collectors;
 
     import static com.azure.core.implementation.http.rest.RestProxyUtils.LOGGER;
@@ -96,7 +97,7 @@
                         userDetails.getLastname(),
                         userDetails.getFirstname(),
                         userDetails.getEmail(),
-                        userDetails.getUsername(),
+                        userDetails.getTitle(),
                         Collections.singletonList(userDetails.getUserRole())
 
                 );
@@ -119,17 +120,21 @@
             SecurityContextHolder.clearContext();
             return "Logout successful";
         }
-        // Password modification endpoint
         @PutMapping("/password")
-        public String modifyPassword(@RequestParam String email, @RequestParam String oldPassword, @RequestParam String newPassword) {
-            // Find user by email (you can implement your logic to find user by email)
-            User user = null; // userRepository.findByEmail(email);
-            if (user != null) {
-                // Call password service to modify password
-                passwordService.modifyPassword(user, oldPassword, newPassword);
-                return "Password modified successfully";
+        public ResponseEntity<String> modifyPassword(@RequestParam String email, @RequestParam String oldPassword, @RequestParam String newPassword) {
+            // Trouver l'utilisateur par email
+            Optional<User> optionalUser = userRepository.findByEmail(email);
+            if (optionalUser.isPresent()) {
+                User user = optionalUser.get();
+                try {
+                    // Appeler le service de modification de mot de passe
+                    passwordService.modifyPassword(user, oldPassword, newPassword);
+                    return ResponseEntity.ok("Mot de passe modifié avec succès");
+                } catch (IllegalArgumentException e) {
+                    return ResponseEntity.badRequest().body(e.getMessage());
+                }
             } else {
-                return "User not found";
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utilisateur non trouvé");
             }
         }
 
